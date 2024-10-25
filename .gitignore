@@ -1,0 +1,6 @@
+backend/node_modules
+frontend/node_modules
+
+backend/.env.dev
+
+100MB_1080P_THETESTDATA.COM_mp4.mp4

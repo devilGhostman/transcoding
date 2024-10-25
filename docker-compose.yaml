@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    restart: always 
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    container_name: backend
+    build: ./backend
+    ports:
+      - '8000:8000'
+    env_file:
+      - ./backend/.env.dev
+    volumes:
+      - ./backend/public:/app/public
+      - ./backend/hls-output:/app/hls-output
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy          
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./frontend/.env.local
+    depends_on:
+      - backend
+    stdin_open: true
+    tty: true
