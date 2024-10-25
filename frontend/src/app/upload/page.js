@@ -6,8 +6,10 @@ import { MdDelete, MdEdit } from "react-icons/md";
 
 import axios from "../axios/axios";
 import Navbar from "../components/navbar";
+import { useRouter } from "next/navigation";
 
 function Upload() {
+  const router = useRouter();
   const [video, setvideo] = useState();
   const [error, seterror] = useState("");
   const [onSuccess, setonSuccess] = useState(false);
@@ -45,6 +47,9 @@ function Upload() {
         .then(() => {
           console.log("video uploaded");
           setonSuccess(true);
+          setTimeout(() => {
+            router.push("/");
+          }, 500);
         })
         .catch((error) => {
           console.log(error);
