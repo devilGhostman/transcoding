@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - '27017:27017'
+    restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
@@ -26,8 +38,10 @@ services:
       - ./backend/hls-output:/app/hls-output
     restart: always
     depends_on:
+      mongo:
+        condition: service_healthy      
       rabbitmq:
-        condition: service_healthy          
+        condition: service_healthy    
 
   frontend:
     container_name: frontend
